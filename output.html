@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_7bce45d27ae4fd45656c0da83dc62aba {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            </style>
+
+            <style>html, body {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            </style>
+
+            <style>#map {
+                position:absolute;
+                top:0;
+                bottom:0;
+                right:0;
+                left:0;
+                }
+            </style>
+
+            <script>
+                L_NO_TOUCH = false;
+                L_DISABLE_3D = false;
+            </script>
+
+        
+</head>
+<body>
+    
+    
+            <div class="folium-map" id="map_7bce45d27ae4fd45656c0da83dc62aba" ></div>
+        
+</body>
+<script>
+    
+    
+            var map_7bce45d27ae4fd45656c0da83dc62aba = L.map(
+                "map_7bce45d27ae4fd45656c0da83dc62aba",
+                {
+                    center: [10.7755254, 106.7021047],
+                    crs: L.CRS.EPSG3857,
+                    ...{
+  "zoom": 15,
+  "zoomControl": true,
+  "preferCanvas": false,
+}
+
+                }
+            );
+
+            
+
+        
+    
+            var tile_layer_d00ea95a2701e02f088fb3259439f057 = L.tileLayer(
+                "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {
+  "minZoom": 0,
+  "maxZoom": 19,
+  "maxNativeZoom": 19,
+  "noWrap": false,
+  "attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors",
+  "subdomains": "abc",
+  "detectRetina": false,
+  "tms": false,
+  "opacity": 1,
+}
+
+            );
+        
+    
+            tile_layer_d00ea95a2701e02f088fb3259439f057.addTo(map_7bce45d27ae4fd45656c0da83dc62aba);
+        
+    
+            var marker_fcf6466d5e0a297d8ea2802a365506a6 = L.marker(
+                [10.7755254, 106.7021047],
+                {
+}
+            ).addTo(map_7bce45d27ae4fd45656c0da83dc62aba);
+        
+    
+            var icon_237f4029b640578d7dd159fbb06f12e9 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_0f90bcda815b6a87dbf1ec153eb4a423 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_e366bbd5996f38158a0047e665463937 = $(`<div id="html_e366bbd5996f38158a0047e665463937" style="width: 100.0%; height: 100.0%;">Your location</div>`)[0];
+                popup_0f90bcda815b6a87dbf1ec153eb4a423.setContent(html_e366bbd5996f38158a0047e665463937);
+            
+        
+
+        marker_fcf6466d5e0a297d8ea2802a365506a6.bindPopup(popup_0f90bcda815b6a87dbf1ec153eb4a423)
+        ;
+
+        
+    
+    
+                marker_fcf6466d5e0a297d8ea2802a365506a6.setIcon(icon_237f4029b640578d7dd159fbb06f12e9);
+            
+    
+            var marker_97fba8ef23962c0484c1302d99a6efb6 = L.marker(
+                [10.7811643, 106.6898451],
+                {
+}
+            ).addTo(map_7bce45d27ae4fd45656c0da83dc62aba);
+        
+    
+        var popup_8d36c6903927546509df7901960e81ed = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_8b613b5192caf8788610b9d1f14d3a1f = $(`<div id="html_8b613b5192caf8788610b9d1f14d3a1f" style="width: 100.0%; height: 100.0%;">Cà Phê Acoustic</div>`)[0];
+                popup_8d36c6903927546509df7901960e81ed.setContent(html_8b613b5192caf8788610b9d1f14d3a1f);
+            
+        
+
+        marker_97fba8ef23962c0484c1302d99a6efb6.bindPopup(popup_8d36c6903927546509df7901960e81ed)
+        ;
+
+        
+    
+    
+            var marker_d691f45dd29c63362a8ba56de612bc3d = L.marker(
+                [10.7809198, 106.689929],
+                {
+}
+            ).addTo(map_7bce45d27ae4fd45656c0da83dc62aba);
+        
+    
+        var popup_a8b1c78bf01bd30ce7559757dd90063b = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_ffe1128dfbb318e47890a745c178a064 = $(`<div id="html_ffe1128dfbb318e47890a745c178a064" style="width: 100.0%; height: 100.0%;">Cà Phê Sỏi Đá</div>`)[0];
+                popup_a8b1c78bf01bd30ce7559757dd90063b.setContent(html_ffe1128dfbb318e47890a745c178a064);
+            
+        
+
+        marker_d691f45dd29c63362a8ba56de612bc3d.bindPopup(popup_a8b1c78bf01bd30ce7559757dd90063b)
+        ;
+
+        
+    
+    
+            var marker_51a32c17aeb600144236231e1d177b89 = L.marker(
+                [10.7757808, 106.7071741],
+                {
+}
+            ).addTo(map_7bce45d27ae4fd45656c0da83dc62aba);
+        
+    
+        var popup_9d29cf5d2d1b207f84421c06474c12e6 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_c08e84e283393618170666b57f585c1a = $(`<div id="html_c08e84e283393618170666b57f585c1a" style="width: 100.0%; height: 100.0%;">Cà Phê Vườn Kiểng</div>`)[0];
+                popup_9d29cf5d2d1b207f84421c06474c12e6.setContent(html_c08e84e283393618170666b57f585c1a);
+            
+        
+
+        marker_51a32c17aeb600144236231e1d177b89.bindPopup(popup_9d29cf5d2d1b207f84421c06474c12e6)
+        ;
+
+        
+    
+    
+            var marker_863977fd099807f89a3d8abb3ea7ac6b = L.marker(
+                [10.7645525, 106.7036887],
+                {
+}
+            ).addTo(map_7bce45d27ae4fd45656c0da83dc62aba);
+        
+    
+        var popup_276281e3e14624878cde45c3bdaf5029 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_0a7bb762aac5fe3749c68ece09e61ded = $(`<div id="html_0a7bb762aac5fe3749c68ece09e61ded" style="width: 100.0%; height: 100.0%;">Cà Phê Spotlight</div>`)[0];
+                popup_276281e3e14624878cde45c3bdaf5029.setContent(html_0a7bb762aac5fe3749c68ece09e61ded);
+            
+        
+
+        marker_863977fd099807f89a3d8abb3ea7ac6b.bindPopup(popup_276281e3e14624878cde45c3bdaf5029)
+        ;
+
+        
+    
+    
+            var marker_867a4f3c182b72cd370d8a15cf64349c = L.marker(
+                [10.7814169, 106.7061129],
+                {
+}
+            ).addTo(map_7bce45d27ae4fd45656c0da83dc62aba);
+        
+    
+        var popup_dd12c69b89e013eda8ce942be639f750 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_253ec6c9b66526caefedc1e158a6bb30 = $(`<div id="html_253ec6c9b66526caefedc1e158a6bb30" style="width: 100.0%; height: 100.0%;">Cà Phê Màu Hoa Anh Đào</div>`)[0];
+                popup_dd12c69b89e013eda8ce942be639f750.setContent(html_253ec6c9b66526caefedc1e158a6bb30);
+            
+        
+
+        marker_867a4f3c182b72cd370d8a15cf64349c.bindPopup(popup_dd12c69b89e013eda8ce942be639f750)
+        ;
+
+        
+    
+</script>
+</html>
