@@ -3,58 +3,108 @@ from __future__ import annotations
 import os
 import time
 from pathlib import Path
+from typing import Optional
 
-from flask import Flask, flash, redirect, render_template, request, send_file, url_for
+from fastapi import FastAPI, HTTPException
+from fastapi.responses import FileResponse, JSONResponse
+from pydantic import BaseModel
 
-from function import POI, geocode
+from osm_function import POI, geocode
+from ow_function import API_KEY, get_current_city_weather
 
 BASE_DIR = Path(__file__).resolve().parent
 MAP_FILE = BASE_DIR / "output.html"
+TEMPLATES_DIR = BASE_DIR / "templates"
 
 
-def create_app() -> Flask:
-    app = Flask(__name__)
-    # Simple secret key so we can use flash messages without extra setup.
-    app.secret_key = os.environ.get("FLASK_SECRET_KEY", "dev-secret-key")
-
-    @app.route("/", methods=["GET", "POST"])
-    def index():
-        if request.method == "POST":
-            location = request.form.get("location", "").strip()
-            if not location:
-                flash("Vui lòng nhập địa điểm ở Việt Nam.", "danger")
-                return redirect(url_for("index"))
-
-            # Append "Việt Nam" to bias the geocoder to the country we care about.
-            query = f"{location}, Việt Nam"
-            try:
-                lat, lon, display_name = geocode(query)
-                POI(float(lat), float(lon), radius=1500, POI_count=5)
-                flash(f"Đang hiển thị quán cà phê quanh {display_name}.", "success")
-                return render_template(
-                    "index.html",
-                    map_ready=True,
-                    display_name=display_name,
-                    timestamp=int(time.time()),
-                )
-            except Exception as exc:  # Broad catch to surface friendly message.
-                flash(f"Lỗi khi tìm địa điểm: {exc}", "danger")
-                return redirect(url_for("index"))
-
-        return render_template("index.html", map_ready=False)
-
-    @app.route("/map")
-    def map_view():
-        if not MAP_FILE.exists():
-            flash("Chưa có bản đồ nào được tạo.", "warning")
-            return redirect(url_for("index"))
-        return send_file(MAP_FILE)
-
-    return app
+class LocationPayload(BaseModel):
+    location: Optional[str] = None
 
 
-app = create_app()
+app = FastAPI(title="Vietnam Explorer API")
+
+
+@app.get("/", response_class=FileResponse)
+def index():
+    """Serve the React single page."""
+    index_file = TEMPLATES_DIR / "index.html"
+    if not index_file.exists():
+        raise HTTPException(status_code=500, detail="index.html not found.")
+    return FileResponse(index_file)
+
+
+@app.get("/poi", response_class=FileResponse)
+def poi_page():
+    """Serve SPA for the POI page (GET)."""
+    return index()
+
+
+@app.get("/weather", response_class=FileResponse)
+def weather_page():
+    """Serve SPA for the weather page (GET)."""
+    return index()
+
+
+@app.get("/map")
+def map_view():
+    if not MAP_FILE.exists():
+        return JSONResponse(
+            {"error": "Chưa có bản đồ nào được tạo. Hãy tìm kiếm một địa điểm để bắt đầu."},
+            status_code=404,
+        )
+    return FileResponse(MAP_FILE)
+
+
+@app.post("/poi")
+def api_poi(payload: LocationPayload):
+    location = (payload.location or "").strip()
+    if not location:
+        raise HTTPException(status_code=400, detail="Vui lòng nhập địa điểm ở Việt Nam.")
+
+    query = f"{location}, Việt Nam"
+    try:
+        lat, lon, display_name = geocode(query)
+        POI(float(lat), float(lon), radius=1500, POI_count=5, output_path=str(MAP_FILE))
+    except Exception as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
+
+    map_url = f"/map?t={int(time.time())}"
+    return {
+        "displayName": display_name or location,
+        "mapUrl": map_url,
+        "message": f"Đang hiển thị quán cà phê quanh {display_name or location}.",
+    }
+
+
+@app.post("/weather")
+def api_weather(payload: LocationPayload):
+    location = (payload.location or "").strip()
+    if not location:
+        raise HTTPException(status_code=400, detail="Vui lòng nhập địa điểm để xem thời tiết.")
+    if not API_KEY:
+        raise HTTPException(status_code=500, detail="Thiếu OPENWEATHER_API_KEY. Vui lòng cấu hình .env.")
+
+    try:
+        data = get_current_city_weather(location, API_KEY)
+    except Exception as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
+
+    return {
+        "location": data.get("name") or location,
+        "description": (data.get("weather") or [{}])[0].get("description"),
+        "temp": (data.get("main") or {}).get("temp"),
+        "humidity": (data.get("main") or {}).get("humidity"),
+        "feels_like": (data.get("main") or {}).get("feels_like"),
+        "wind_speed": (data.get("wind") or {}).get("speed"),
+    }
 
 
 if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
+    import uvicorn
+
+    uvicorn.run(
+        "app:app",
+        host="0.0.0.0",
+        port=int(os.environ.get("PORT", 5000)),
+        reload=True,
+    )

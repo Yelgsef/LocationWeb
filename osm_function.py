@@ -1,10 +1,15 @@
 # -*- coding: utf-8 -*-
 import time, requests, folium
+from typing import List
 
 NOMINATIM = "https://nominatim.openstreetmap.org"
 UA = {"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"}
 OSRM = "https://router.project-osrm.org"
-OVERPASS = "https://overpass.kumi.systems/api/interpreter"
+# Try fast/stable Overpass mirrors in order; fail fast to fall back.
+OVERPASS_ENDPOINTS: List[str] = [
+    "https://overpass-api.de/api/interpreter",
+    "https://overpass.kumi.systems/api/interpreter",
+]
 
 # Name -> Lat Lon
 def geocode (q: str):
@@ -19,7 +24,7 @@ def geocode (q: str):
     # print("Query:", q)
     # print("Lat/Lon:", item["lat"], item["lon"])
     # print("Display name:", item["display_name"])
-    return item["lat"], item["lon"], item.get("Display name", q)
+    return item["lat"], item["lon"], item.get("display_name", q)
 
 
 # Lat Lon -> Address
@@ -45,22 +50,35 @@ def route(lon1, lat1, lon2, lat2):
     return route["geometry"],dist_km, dur_min
 
 # POI 
-def POI (lat: float, lon: float, radius: int, POI_count: int): #Radius in meters
+def POI (lat: float, lon: float, radius: int, POI_count: int, output_path: str = "output.html"): #Radius in meters
     QL = f"""
-    [out:json][timeout:60];
+    [out:json][timeout:25];
     nwr(around:{radius},{lat},{lon})["amenity"="cafe"];
     out center {POI_count};
     """
-    response = requests.post(OVERPASS, data=QL.encode("utf-8"), headers=UA, timeout=120)
-    response.raise_for_status()
-    data = response.json().get("elements", [])
+    data = _call_overpass(QL)
     
-    g_map = folium.Map(location=[lat, lon], zoom_start=15)
+    g_map = folium.Map(location=[lat, lon], zoom_start=15, control_scale=False)
     folium.Marker([lat, lon], popup="Your location",icon=folium.Icon(color="red")).add_to(g_map)
     for location in data[:POI_count]:
         name = location.get("tags", {}).get("name", "(no name)")
         location_lat = (location.get("lat") or location.get("center", {}).get("lat"))
         location_lon = (location.get("lon") or location.get("center", {}).get("lon"))
         folium.Marker([location_lat, location_lon], popup=name).add_to(g_map)
-    g_map.save("output.html")
+    g_map.save(output_path)
     print("Done")
+
+
+def _call_overpass(query: str, timeout_s: int = 20):
+    """Try multiple Overpass mirrors quickly, return elements list or raise."""
+    last_exc = None
+    for endpoint in OVERPASS_ENDPOINTS:
+        try:
+            response = requests.post(endpoint, data=query.encode("utf-8"), headers=UA, timeout=timeout_s)
+            response.raise_for_status()
+            return response.json().get("elements", [])
+        except Exception as exc:
+            last_exc = exc
+            continue
+    if last_exc:
+        raise last_exc
