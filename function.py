@@ -64,7 +64,3 @@ def POI (lat: float, lon: float, radius: int, POI_count: int): #Radius in meters
         folium.Marker([location_lat, location_lon], popup=name).add_to(g_map)
     g_map.save("output.html")
     print("Done")
-
-if __name__ == "__main__":
-    lat2, lon2, n1 = geocode("Hồ Chí Minh, Việt Nam") 
-    POI(lat2, lon2, 1000, 5)
