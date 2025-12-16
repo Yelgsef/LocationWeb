@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Translate | Location Web</title>
+  <style>
+    :root {
+      --bg: radial-gradient(circle at 15% 15%, #1dd3b0 0, #0f3f54 35%, #0c1224 70%, #060915 100%);
+      --card: rgba(255, 255, 255, 0.06);
+      --text: #e8f5ff;
+      --accent: #5eead4;
+      --muted: #9fb5c6;
+      --outline: rgba(255, 255, 255, 0.12);
+      --shadow: 0 24px 52px rgba(0, 0, 0, 0.3);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "DM Sans", "Segoe UI", system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+    }
+    a { color: inherit; text-decoration: none; }
+    header {
+      padding: 18px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .brand { font-weight: 700; letter-spacing: 0.4px; text-transform: uppercase; }
+    nav { display: flex; gap: 12px; }
+    nav a {
+      padding: 10px 14px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--outline);
+      transition: all 0.2s ease;
+      font-weight: 600;
+    }
+    nav a:hover { background: rgba(255, 255, 255, 0.12); transform: translateY(-1px); }
+    main {
+      flex: 1;
+      display: grid;
+      place-items: center;
+      padding: 24px 16px 48px;
+    }
+    .wrap {
+      width: min(720px, 100%);
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02));
+      border: 1px solid var(--outline);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+      padding: 28px;
+      display: grid;
+      gap: 18px;
+    }
+    h1 { margin: 0; font-size: clamp(26px, 3vw, 34px); }
+    p.lead { margin: 6px 0 0; color: var(--muted); line-height: 1.6; }
+    textarea, button {
+      font: inherit;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1px solid var(--outline);
+      background: rgba(6, 14, 24, 0.5);
+      color: var(--text);
+      outline: none;
+      width: 100%;
+    }
+    textarea { min-height: 160px; resize: vertical; }
+    button {
+      cursor: pointer;
+      background: linear-gradient(120deg, #5eead4, #38bdf8);
+      color: #03131f;
+      font-weight: 700;
+      letter-spacing: 0.2px;
+      border: none;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      box-shadow: 0 10px 28px rgba(14, 165, 233, 0.25);
+    }
+    button:hover { transform: translateY(-1px); }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--outline);
+      border-radius: 16px;
+      padding: 16px;
+      display: grid;
+      gap: 10px;
+    }
+    .muted { color: var(--muted); font-size: 14px; }
+    .output {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--outline);
+      border-radius: 12px;
+      padding: 12px;
+      min-height: 80px;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">Location Web</div>
+    <nav>
+      <a href="/">Home</a>
+      <a href="/poi">POI</a>
+      <a href="/weather">Weather</a>
+    </nav>
+  </header>
+  <main>
+    <div class="wrap">
+      <div>
+        <h1>Dịch sang tiếng Việt</h1>
+        <p class="lead">Dán văn bản bất kỳ (tự động nhận dạng ngôn ngữ) và nhận bản dịch tiếng Việt tức thì.</p>
+      </div>
+      <form id="translate-form">
+        <textarea id="text" name="text" placeholder="Nhập nội dung cần dịch..." required></textarea>
+        <button type="submit">Dịch ngay</button>
+      </form>
+      <div class="card">
+        <div id="status" class="muted">Chưa có bản dịch.</div>
+        <div id="output" class="output"></div>
+      </div>
+    </div>
+  </main>
+  <script>
+    const form = document.getElementById("translate-form");
+    const statusEl = document.getElementById("status");
+    const outputEl = document.getElementById("output");
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      statusEl.textContent = "Đang dịch...";
+      outputEl.textContent = "";
+
+      const payload = { text: form.text.value.trim() };
+      if (!payload.text) {
+        statusEl.textContent = "Vui lòng nhập nội dung.";
+        return;
+      }
+      try {
+        const res = await fetch("/api/translate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || "Không thể dịch ngay bây giờ.");
+        statusEl.textContent = "Đã dịch:";
+        outputEl.textContent = data.output;
+      } catch (err) {
+        statusEl.textContent = err.message;
+      }
+    });
+  </script>
+</body>
+</html>

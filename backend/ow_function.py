@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent
 load_dotenv(BASE_DIR / ".env")
+load_dotenv(BASE_DIR.parent / ".env")
 API_KEY = os.environ.get("OPENWEATHER_API_KEY")
 
 def get_current_city_lat_lon(city_name: str, api_key: str) -> tuple:

@@ -1,0 +1,8 @@
+fastapi>=0.115.0
+uvicorn[standard]>=0.30.0
+requests==2.32.3
+urllib3==2.2.1
+folium>=0.16.0
+python-dotenv>=1.0.1
+deep-translator>=1.11.4
+pyrebase4>=4.8.0

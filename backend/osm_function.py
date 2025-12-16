@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
-import time, requests, folium
+import time
 from typing import List
+
+import requests
+import folium
 
 NOMINATIM = "https://nominatim.openstreetmap.org"
 UA = {"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"}
@@ -60,7 +63,7 @@ def POI (lat: float, lon: float, radius: int, POI_count: int, output_path: str =
     
     g_map = folium.Map(location=[lat, lon], zoom_start=15, control_scale=False)
     folium.Marker([lat, lon], popup="Your location",icon=folium.Icon(color="red")).add_to(g_map)
-    for location in data[:POI_count]:
+    for location in data[:POI_count]: # type: ignore
         name = location.get("tags", {}).get("name", "(no name)")
         location_lat = (location.get("lat") or location.get("center", {}).get("lat"))
         location_lon = (location.get("lon") or location.get("center", {}).get("lon"))
